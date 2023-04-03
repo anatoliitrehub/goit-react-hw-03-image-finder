@@ -1,6 +1,6 @@
 import { Component } from 'react';
 // import Loader from 'components/Loader/Loader';
-import FormApi from 'components/FormApi/FormApi';
+// import FormApi from 'components/FormApi/FormApi';
 import ImageGalleryItem from 'components/ImageGalleryItem/ImageGalleryItem';
 
 class ImageGallery extends Component {
