@@ -1,12 +1,13 @@
+import st from './Button.module.css';
 
-
-const Button = ({pageIncrement}) =>{
-    console.log(pageIncrement)
-return(
+const Button = ({ pageIncrement }) => {
+  return (
     <>
-        <button onClick={()=>pageIncrement()}>Load more</button>
+      <button className={st.Button} onClick={() => pageIncrement()}>
+        Load more
+      </button>
     </>
-)
-}
+  );
+};
 
 export default Button;

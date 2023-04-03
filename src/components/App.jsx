@@ -4,6 +4,7 @@ import Searchbar from './Searchbar/Searchbar';
 import Button from './Button/Button';
 import FormApi from 'components/FormApi/FormApi';
 import Loader from 'components/Loader/Loader';
+import Modal from './Modal/Modal';
 
 
 class App extends Component {
@@ -15,82 +16,76 @@ class App extends Component {
     perPage: 12,
     loading:false,
     loadMore:false,
-    modalOpen:false
+    modalOpen:false,
+    activeId:0,
   };
  
 
   componentDidMount() {
-    //   this.requestGallery()
-    // FormApi(this.props.searchWord, this.state.page, this.state.perPage).then(
-    //   data => this.setState({ gallery: data.data.hits })
-    // );
+    
     // console.log("mount")
 
   }
 
-
-
   componentDidUpdate(prevProps,prevState) {
     if(prevState.page!==this.state.page||prevState.searchWord!==this.state.searchWord) {
-      console.log("loading")
+      console.log("loading", this.state.loading)
       
-        this.setState(()=>({ loading:true}))
+        // this.setState(()=>({ loading:true}))
         
 
-    FormApi(this.state.searchWord, this.state.page, this.state.perPage).then(
+    const fetchApi = async () => await FormApi(this.state.searchWord, this.state.page, this.state.perPage).then(
       data => {this.setState((prev)=>({ 
         gallery: [...prev.gallery,...data.data.hits ]}))
         if((this.state.page*this.state.perPage)<data.data.totalHits) {
          this.setState(()=>({loadMore:true}))}
          else this.setState(()=>({loadMore:false}))
     
-        }).catch(error=>console.log(error)).finally(this.setState(()=>({loading:false})))
+        }).catch(error=>console.log(error))
+        // .finally(this.setState(()=>({loading:false})))
         
-        
-    console.log("update")}
-       
-
-  }
+        fetchApi().finally(this.setState(()=>({loading:false}))) 
+    console.log("App update")}
+        }
 
   getQuery(searchWord) {
-    console.log('search', searchWord);
-    // this.setState({searchWord:searchWord });
-    console.log("state getQuery",this.state);
-    this.setState(()=>({searchWord:searchWord,page:1,gallery:[]}))
-    // FormApi(searchWord, this.state.page, this.state.perPage).then(
-    //   data => {this.setState(()=>({ 
-    //     gallery: data.data.hits,
-    //     total:data.data.totalHits }))
-    //     if((this.state.page*this.state.perPage)<data.data.totalHits) {
-    //      this.setState(()=>({loadMore:true}))}
-    
-    //     });
+    this.setState(()=>({
+      searchWord:searchWord,
+      page:1,
+      gallery:[],
+      loading:true
+    }))
 
   }
 
   pageChange(){
     // if((this.state.page*this.state.perPage))
     this.setState((prev)=>({page:prev.page+1}))
-    
+   
   }
 
-  render() {
-    // FormApi(this.state.searchWord, this.state.page, this.state.perPage).then(
-    //   data => {this.setState(()=>({ 
-    //     gallery: data.data.hits,
-    //     total:data.data.totalHits }))
-    //     if((this.state.page*this.state.perPage)<data.data.totalHits) {
-    //      this.setState(()=>({loadMore:true}))}
-    
-    //     });
+  activeImg(id){
+    // console.log("active",id)
+    this.setState(()=>({
+      activeId:id,
+    modalOpen:true}))
 
+  }
+
+  handlerModalClose(e){
+    console.log("keyb",e)
+    this.setState(()=>({modalOpen:false}))
+  }
+ 
+  render() {
+    
     return (
       <>
         <Searchbar getQuery={this.getQuery.bind(this)} />
         {(this.state.loading)&&<Loader />}
-        {(this.state.gallery.length!==0)&&<ImageGallery gallery={this.state.gallery}/>}
+        {(this.state.gallery.length!==0)&&<ImageGallery gallery={this.state.gallery} activeImg={this.activeImg.bind(this)}/>}
         {(this.state.loadMore)&&<Button pageIncrement={this.pageChange.bind(this)} />}
-        {/* {(this.state.modalOpen)&&<Modal />} */}
+        {(this.state.modalOpen)&&<Modal gallery={this.state.gallery} imgId={this.state.activeId} modalClose={this.handlerModalClose.bind(this)}/>}
       </>
     );
   }

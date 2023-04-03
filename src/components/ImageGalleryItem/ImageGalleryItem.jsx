@@ -1,10 +1,10 @@
+import s from './ImageGalleryItem.module.css';
 
-
-const ImageGalleryItem = ({webformatURL,largeImageURL,tag}) =>{
+const ImageGalleryItem = ({webformatURL,tag,elId,activeImg}) =>{
     return(
         <>
-<li className="gallery-item">
-  <img src={webformatURL} alt={tag} />
+<li className={s.ImageGalleryItem} onClick={()=>activeImg(elId)} >
+  <img className={s.ImageGalleryItemImage} src={webformatURL} alt={tag} />
 </li>
         </>
     )
