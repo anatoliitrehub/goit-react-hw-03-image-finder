@@ -27,25 +27,40 @@ class App extends Component {
 
   }
 
+  shouldComponentUpdate(newProps,newState){
+    if(newState.modalOpen!==this.state.modalOpen) return false
+    return true
+  }
+
   componentDidUpdate(prevProps,prevState) {
     if(prevState.page!==this.state.page||prevState.searchWord!==this.state.searchWord) {
-      console.log("loading", this.state.loading)
+      this.setState(()=>({loading:true}));
+
+      // console.log("loading", this.state.loading)
       
         // this.setState(()=>({ loading:true}))
         
+    const fetchApi = async () => await FormApi(this.state.searchWord, this.state.page, this.state.perPage);
+      
+    this.setState(()=>({loading:true}));
+    // console.log("loading", this.state.loading)
 
-    const fetchApi = async () => await FormApi(this.state.searchWord, this.state.page, this.state.perPage).then(
-      data => {this.setState((prev)=>({ 
-        gallery: [...prev.gallery,...data.data.hits ]}))
-        if((this.state.page*this.state.perPage)<data.data.totalHits) {
-         this.setState(()=>({loadMore:true}))}
-         else this.setState(()=>({loadMore:false}))
-    
-        }).catch(error=>console.log(error))
         // .finally(this.setState(()=>({loading:false})))
         
-        fetchApi().finally(this.setState(()=>({loading:false}))) 
-    console.log("App update")}
+        fetchApi().then(
+          data => {this.setState((prev)=>({ 
+            gallery: [...prev.gallery,...data.data.hits ]}))
+            if((this.state.page*this.state.perPage)<data.data.totalHits) {
+             this.setState(()=>({loadMore:true}))}
+             else this.setState(()=>({loadMore:false}))
+             this.setState(()=>({loading:false}))
+        
+            }).catch(error=>console.log(error))
+            // .finally(this.setState(()=>({loading:false}))) 
+            // console.log("loading", this.state.loading)
+
+              //  console.log("App update")
+              }
         }
 
   getQuery(searchWord) {
@@ -73,7 +88,6 @@ class App extends Component {
   }
 
   handlerModalClose(e){
-    console.log("keyb",e)
     this.setState(()=>({modalOpen:false}))
   }
  
@@ -82,8 +96,8 @@ class App extends Component {
     return (
       <>
         <Searchbar getQuery={this.getQuery.bind(this)} />
-        {(this.state.loading)&&<Loader />}
         {(this.state.gallery.length!==0)&&<ImageGallery gallery={this.state.gallery} activeImg={this.activeImg.bind(this)}/>}
+        {(this.state.loading)&&<Loader />}
         {(this.state.loadMore)&&<Button pageIncrement={this.pageChange.bind(this)} />}
         {(this.state.modalOpen)&&<Modal gallery={this.state.gallery} imgId={this.state.activeId} modalClose={this.handlerModalClose.bind(this)}/>}
       </>

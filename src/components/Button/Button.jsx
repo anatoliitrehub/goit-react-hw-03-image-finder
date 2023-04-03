@@ -1,4 +1,5 @@
 import st from './Button.module.css';
+import PropTypes from 'prop-types';
 
 const Button = ({ pageIncrement }) => {
   return (
@@ -9,5 +10,9 @@ const Button = ({ pageIncrement }) => {
     </>
   );
 };
+
+Button.propTypes={
+  pageIncrement:PropTypes.func.isRequired
+}
 
 export default Button;

@@ -1,5 +1,6 @@
 import { Component } from 'react';
-import s from './Searchbar.module.css'
+import s from './Searchbar.module.css';
+import PropTypes from 'prop-types';
 
 class Searchbar extends Component {
   state = {
@@ -8,17 +9,17 @@ class Searchbar extends Component {
 
   handlerSubmit(ev) {
     ev.preventDefault();
-    // console.log("func",this.props)
-    // console.log('word', this.state.queryWord);
-
-    (this.state.queryWord)&&this.props.getQuery(this.state.queryWord)
+    this.state.queryWord && this.props.getQuery(this.state.queryWord);
   }
 
   render() {
     return (
       <>
         <header className={s.Searchbar}>
-          <form className={s.SearchForm} onSubmit={(ev)=>this.handlerSubmit(ev)}>
+          <form
+            className={s.SearchForm}
+            onSubmit={ev => this.handlerSubmit(ev)}
+          >
             <button type="submit" className={s.SearchFormButton}>
               <span className={s.SearchFormButtonLabel}>Search</span>
             </button>
@@ -29,7 +30,7 @@ class Searchbar extends Component {
               autoComplete="off"
               autoFocus
               placeholder="Search images and photos"
-                value={this.state.queryWord}
+              value={this.state.queryWord}
               onChange={ev => this.setState({ queryWord: ev.target.value })}
             />
           </form>
@@ -37,6 +38,10 @@ class Searchbar extends Component {
       </>
     );
   }
+}
+
+Searchbar.propTypes={
+  getQuery:PropTypes.func,
 }
 
 export default Searchbar;
